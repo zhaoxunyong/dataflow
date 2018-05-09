@@ -1,4 +1,4 @@
-package com.aeasycredit.hkcash.configserver;
+package com.aeasycredit.stream;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,6 +13,7 @@ import org.springframework.integration.annotation.Transformer;
 
 /**
  * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/
+ * http://192.168.99.100:9393/dashboard/
  */
 @EnableBinding(Processor.class)
 @SpringBootApplication

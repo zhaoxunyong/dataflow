@@ -1,4 +1,4 @@
-package com.aeasycredit.hkcash.configserver;
+package com.aeasycredit.stream;
 
 import java.util.Date;
 
@@ -13,6 +13,7 @@ import org.springframework.integration.annotation.Poller;
 
 /**
  * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/
+ * http://192.168.99.100:9393/dashboard/
  */
 @EnableBinding(Source.class)
 @SpringBootApplication

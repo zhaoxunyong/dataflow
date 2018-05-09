@@ -1,4 +1,4 @@
-package com.aeasycredit.hkcash.configserver;
+package com.aeasycredit.stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.cloud.stream.messaging.Sink;
 
 /**
  * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/
+ * http://192.168.99.100:9393/dashboard/
  */
 @SpringBootApplication
 @EnableBinding(Sink.class)
