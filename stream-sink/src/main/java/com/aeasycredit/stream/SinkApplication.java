@@ -9,16 +9,18 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 
 /**
- * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/
+ * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/ 
  * http://192.168.99.100:9393/dashboard/
  */
 @SpringBootApplication
 @EnableBinding(Sink.class)
 public class SinkApplication {
     private final Logger logger = LoggerFactory.getLogger(SinkApplication.class);
+    
     public static void main(String[] args) {
         SpringApplication.run(SinkApplication.class, args);
     }
+    
     @StreamListener(Sink.INPUT)
     public void loggerSink(String date) {
         logger.info("Received: " + date);

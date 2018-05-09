@@ -12,7 +12,7 @@ import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
 
 /**
- * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/
+ * http://www.tony666.com/2018/04/03/SpingCloud/spring-cloud-dataflow/ 
  * http://192.168.99.100:9393/dashboard/
  */
 @EnableBinding(Source.class)
@@ -20,14 +20,14 @@ import org.springframework.integration.annotation.Poller;
 public class SourceApplication {
     
     private final Logger logger = LoggerFactory.getLogger(SourceApplication.class);
+    
     private int count = 0;
+    
     public static void main(String[] args) {
         SpringApplication.run(SourceApplication.class, args);
     }
-    @InboundChannelAdapter(
-            value = Source.OUTPUT,
-            poller = @Poller(maxMessagesPerPoll = "1", fixedDelay = "10000")
-    )
+    
+    @InboundChannelAdapter(value = Source.OUTPUT, poller = @Poller(maxMessagesPerPoll = "1", fixedDelay = "10000"))
     public Long timeSource() {
         logger.info("Send event: {}", ++count);
         return new Date().getTime();
