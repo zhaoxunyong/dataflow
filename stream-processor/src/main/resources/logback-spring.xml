@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration  scan="true" scanPeriod="60 seconds" debug="false">
+    <contextName>logback</contextName>
+    <springProperty scope="context" name="server.name" source="spring.application.name"/>
+    <springProperty scope="context" name="log.path" source="logging.path"/>
+    <property name="log.file" value="${log.path}/${server.name}.log" />
+    <property name="log.error_file" value="${log.path}/${server.name}-error.log" />
+    
+    <!-- SMTP server的地址 -->
+    <property name="smtpHost" value="smtp.exmail.qq.com" />
+    <!-- SMTP server的端口地址。默认值：25 -->
+    <property name="smtpPort" value="465" />
+    <!-- 发送邮件账号，默认为null -->
+    <property name="username" value="notify@aeasycredit.com" />
+    <!-- 发送邮件密码，默认为null -->
+    <property name="password" value="NotAeasy8396*" />
+    <!-- 如果设置为true，appender将会使用SSL连接到日志服务器。默认值：false -->
+    <property name="SSL" value="true" />
+    <!-- 指定发送到那个邮箱，多个可以逗号隔开，可设置多个<to>属性，指定多个目的邮箱 -->
+    <property name="email_to" value="dave.zhao@aeasycredit.com,weng.weng@aeasycredit.com,leo.lu@aeasycredit.com,evan.fang@aeasycredit.com,vincent.chen@aeasycredit.com" />
+    <!-- 指定发件人名称 -->
+    <property name="email_from" value="notify@aeasycredit.com" />
+    <!-- 指定emial的标题，它需要满足PatternLayout中的格式要求。如果设置成“Log: %logger - %msg ”，就案例来讲，则发送邮件时，标题为“【Error】: com.foo.Bar - Hello World ”。 默认值："%logger{20} - %m". -->
+    <property name="email_subject" value="【Error】: %logger{20} - %m" />
+    
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+       <!-- <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>-->
+        <encoder>
+        	<charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} Line:%L --- [%thread] %-40.40logger{39} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <!-- 正在记录的日志文件的路径及文件名 -->
+        <file>${log.file}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${log.path}/temp/${server.name}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 500MB, keep 90 days worth of history, but at most 50GB -->
+            <maxFileSize>500MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>50GB</totalSizeCap>
+        </rollingPolicy>
+	    <encoder>
+	    	<charset>UTF-8</charset>
+	        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} Line:%L --- [%thread] %-40.40logger{39} - %m%n</pattern>
+	    </encoder>
+	</appender>
+	
+	<appender name="error_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <!-- 正在记录的日志文件的路径及文件名 -->
+        <file>${log.error_file}</file>
+        <!--过滤器,只打ERROR级别的日志-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+          <level>ERROR</level>
+     	</filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${log.path}/temp/${server.name}-%d{yyyy-MM-dd}.%i-error.log</fileNamePattern>
+            <!-- each file should be at most 500MB, keep 90 days worth of history, but at most 50GB -->
+            <maxFileSize>500MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>50GB</totalSizeCap>
+        </rollingPolicy>
+	    <encoder>
+	    	<charset>UTF-8</charset>
+	        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} Line:%L --- [%thread] %-40.40logger{39} - %m%n</pattern>
+	    </encoder>
+	</appender>
+	
+	<!-- ERROR邮件发送 -->
+    <appender name="errMailer" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>${smtpHost}</smtpHost>
+        <smtpPort>${smtpPort}</smtpPort>
+        <username>${username}</username>
+        <password>${password}</password>
+        <asynchronousSending>true</asynchronousSending>
+        <SSL>${SSL}</SSL>
+        <to>${email_to}</to>
+        <from>${email_from}</from>
+        <springProfile name="default">
+        	<subject>${email_subject}</subject>
+        </springProfile>
+        <springProfile name="dev">
+        	<subject>DEV: ${email_subject}</subject>
+        </springProfile>
+        <springProfile name="test">
+        	<subject>TEST: ${email_subject}</subject>
+        </springProfile>
+        <springProfile name="uat">
+        	<subject>UAT: ${email_subject}</subject>
+        </springProfile>
+        <springProfile name="prod">
+        	<subject>PROD: ${email_subject}</subject>
+        </springProfile>
+　　　　 <!-- html格式-->
+        <layout class="ch.qos.logback.classic.html.HTMLLayout">
+            <Pattern>%date%level%thread%logger{0}%line%message</Pattern>
+        </layout>
+　　　　 <!-- 这里采用等级过滤器 指定等级相符才发送 -->
+        <!-- <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter> -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+          <level>ERROR</level>
+     	</filter>
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+            <!-- 每个电子邮件只发送一个日志条目 -->
+            <bufferSize>10</bufferSize>
+        </cyclicBufferTracker>
+    </appender>
+	
+	<!-- 本地调试 -->
+	<springProfile name="default">
+	    <root level="info">
+	        <appender-ref ref="console" />
+	        <appender-ref ref="error_file" />
+	    </root>
+	    
+	    <!-- 不顯示eureka-server的info信息 -->
+	    <logger name="com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver" level="ERROR" />
+	    <logger name="com.netflix.eureka.registry.AbstractInstanceRegistry" level="ERROR" />
+	</springProfile>
+	
+	<!-- 其他环境 -->
+	<springProfile name="!default">
+	    <root level="info">
+	        <appender-ref ref="console" />
+	        <appender-ref ref="file" />
+	        <appender-ref ref="error_file" />
+	    </root>
+	    
+	    <!-- 不顯示eureka-server的info信息 -->
+	    <logger name="com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver" level="ERROR" />
+	    <logger name="com.netflix.eureka.registry.AbstractInstanceRegistry" level="ERROR" />
+	    
+	    <!-- 導入今年的香港公眾假日 -->
+	    <logger name="com.aeasycredit.hkcash.configserver.tasks.ScheduledImportHolidayTasks" level="INFO">
+	        <appender-ref ref="errMailer" />
+	    </logger>
+	    
+	    <!-- 
+	    <logger name="com.xxx.controller.LearnController" level="WARN" additivity="false">
+	        <appender-ref ref="console" />
+	        <appender-ref ref="file" />
+	    </logger>
+	    <logger name="com.aeasycredit.hkcash.eureka.EurekaServeApplication" level="ERROR">
+	        <appender-ref ref="errMailer" />
+	    </logger> -->
+	</springProfile>
+
+    
+</configuration>
